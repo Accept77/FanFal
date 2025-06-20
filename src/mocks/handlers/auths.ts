@@ -59,13 +59,13 @@ export const loginHandlers = [
                 'mock-signature';
 
             setCookie('accessToken', mockAccessToken, {
-                secure: process.env.NODE_ENV === 'production',
+                secure: true,
                 sameSite: 'strict',
                 maxAge: TOKEN_EXPIRY.ACCESS_TOKEN,
                 path: '/',
             });
             setCookie('refreshToken', mockRefreshToken, {
-                secure: process.env.NODE_ENV === 'production',
+                secure: true,
                 sameSite: 'strict',
                 maxAge: TOKEN_EXPIRY.REFRESH_TOKEN,
                 path: '/',
@@ -242,7 +242,7 @@ export const refreshHandlers = [
                 'mock-signature';
 
             setCookie('accessToken', newAccessToken, {
-                secure: process.env.NODE_ENV === 'production',
+                secure: true,
                 sameSite: 'strict',
                 maxAge: TOKEN_EXPIRY.ACCESS_TOKEN,
                 path: '/',

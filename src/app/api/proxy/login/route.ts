@@ -27,7 +27,7 @@ export async function POST(request: Request) {
                 // accessToken만 프록시에서 설정 (refreshToken은 백엔드가 이미 설정함)
                 cookieStore.set('accessToken', accessToken, {
                     httpOnly: true,
-                    secure: process.env.NODE_ENV === 'production',
+                    secure: true,
                     sameSite: 'strict',
                     maxAge: TOKEN_EXPIRY.ACCESS_TOKEN,
                     path: '/',

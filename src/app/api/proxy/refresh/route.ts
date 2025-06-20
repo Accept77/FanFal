@@ -35,7 +35,7 @@ export async function POST() {
         if (newAccessToken && setCookieHeader && newAuthorizationHeader) {
             cookieStore.set('accessToken', newAccessToken, {
                 httpOnly: true,
-                secure: process.env.NODE_ENV === 'production',
+                secure: true,
                 sameSite: 'strict',
                 maxAge: TOKEN_EXPIRY.ACCESS_TOKEN,
                 path: '/',
