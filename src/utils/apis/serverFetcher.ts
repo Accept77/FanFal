@@ -50,7 +50,7 @@ export const serverFetcher = async <TResponse, TRequest>(
 
                 cookieStore.set('accessToken', newAccessToken, {
                     httpOnly: true,
-                    secure: true,
+                    secure: process.env.NODE_ENV === 'production',
                     sameSite: 'strict',
                     path: '/',
                 });
