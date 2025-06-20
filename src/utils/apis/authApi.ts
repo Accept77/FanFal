@@ -10,9 +10,9 @@ import {
     FindPasswordRequestDto,
 } from '@/types/auth';
 import { customFetcher } from '@/utils/apis/customFetcher';
-const BASE_URL = '/api/proxy';
+//const BASE_URL = '/api/proxy';
 // msw로 실행시에는 아래 url로 변경!
-//const BASE_URL = '/api/auth';
+const BASE_URL = '/api/auth';
 export const authApi = {
     // 로그인
     login: async (loginData: LoginRequestDto) => {

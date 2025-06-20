@@ -4,16 +4,40 @@ import {
     LoginRequestDto,
     SignupMemberRequestDto,
 } from '@/types/auth';
-import { mockUser } from '@/__mock__/user';
 import { getCookie, removeCookie, setCookie } from '@/utils/cookies';
 import { TOKEN_EXPIRY } from '@/config/constants';
-
+const mockUser = [
+    {
+        email: 'test@test.com',
+        password: 'test1234!',
+        nickname: 'user1',
+        wistLikeCount: 5,
+        description: '안녕하세요 사용자입니다.',
+        profileImage: 'https://randomuser.me/api/portraits/men/75.jpg',
+    },
+    {
+        email: 'test2@test.com',
+        password: 'test1234!',
+        nickname: 'user2',
+        wistLikeCount: 10,
+        description: '안녕하세요 사용자2입니다.',
+        profileImage: 'https://randomuser.me/api/portraits/men/76.jpg',
+    },
+];
 const BASE_URL = 'http://localhost:3000'; // 추후 백엔드 서버로 변경
+
+// 🎯 완벽한 유니코드 안전 Base64 인코딩
+function unicodeSafeBase64Encode(str: string): string {
+    return btoa(unescape(encodeURIComponent(str)));
+}
+
+// 🎯 완벽한 유니코드 안전 Base64 디코딩
+function unicodeSafeBase64Decode(str: string): string {
+    return decodeURIComponent(escape(atob(str)));
+}
 
 export const loginHandlers = [
     http.post(`${BASE_URL}/api/auth/login`, async ({ request }) => {
-        console.log('loginHandlers 호출');
-
         const loginData = (await request.json()) as LoginRequestDto;
 
         if (
@@ -23,49 +47,64 @@ export const loginHandlers = [
                     user.password === loginData.password
             )
         ) {
+            const userInfo = mockUser.find(
+                (user) => user.email === loginData.email
+            );
             // 🎯 실제 JWT처럼 만료시간을 가진 토큰 생성
             const accessPayload = {
-                userId: loginData.email,
-                nickName: mockUser.find(
-                    (user) => user.email === loginData.email
-                )?.nickname,
+                email: userInfo?.email,
+                nickname: userInfo?.nickname,
                 role: 'user',
                 iat: Math.floor(Date.now() / 1000), // 발급 시간
                 exp: Math.floor(Date.now() / 1000) + 30, // 🎯 30초 후 만료
+                userInfo: {
+                    email: userInfo?.email,
+                    nickname: userInfo?.nickname,
+                    profileImage: userInfo?.profileImage,
+                    wistLikeCount: userInfo?.wistLikeCount,
+                    description: userInfo?.description,
+                },
             };
             const refreshPayload = {
-                userId: loginData.email,
-                nickName: mockUser.find(
-                    (user) => user.email === loginData.email
-                )?.nickname,
+                email: userInfo?.email,
+                nickname: userInfo?.nickname,
                 type: 'refresh',
                 iat: Math.floor(Date.now() / 1000),
                 exp: Math.floor(Date.now() / 1000) + 7 * 24 * 60 * 60, // 🎯 7일 후 만료
+                userInfo: {
+                    email: userInfo?.email,
+                    nickname: userInfo?.nickname,
+                    profileImage: userInfo?.profileImage,
+                    wistLikeCount: userInfo?.wistLikeCount,
+                    description: userInfo?.description,
+                },
             };
 
             // JWT 형태로 만들기 (header.payload.signature)
             const header = { alg: 'HS256', typ: 'JWT' };
+            // 🎯 안전한 base64 인코딩 사용
             const mockAccessToken =
-                btoa(JSON.stringify(header)) +
+                unicodeSafeBase64Encode(JSON.stringify(header)) +
                 '.' +
-                btoa(JSON.stringify(accessPayload)) +
+                unicodeSafeBase64Encode(JSON.stringify(accessPayload)) +
                 '.' +
                 'mock-signature';
+
             const mockRefreshToken =
-                btoa(JSON.stringify(header)) +
+                unicodeSafeBase64Encode(JSON.stringify(header)) +
                 '.' +
-                btoa(JSON.stringify(refreshPayload)) +
+                unicodeSafeBase64Encode(JSON.stringify(refreshPayload)) +
                 '.' +
                 'mock-signature';
 
             setCookie('accessToken', mockAccessToken, {
-                secure: true,
+                secure: process.env.NODE_ENV === 'production',
                 sameSite: 'strict',
                 maxAge: TOKEN_EXPIRY.ACCESS_TOKEN,
                 path: '/',
             });
             setCookie('refreshToken', mockRefreshToken, {
-                secure: true,
+                secure: process.env.NODE_ENV === 'production',
                 sameSite: 'strict',
                 maxAge: TOKEN_EXPIRY.REFRESH_TOKEN,
                 path: '/',
@@ -140,39 +179,31 @@ export const signupHandlers = [
 ];
 export const userHandlers = [
     http.get(`${BASE_URL}/api/auth/user`, async ({ request }) => {
-        console.log('userHandlers 호출');
         const authHeader = request.headers.get('Authorization');
         const token = authHeader?.replace('Bearer ', '');
 
         // 🎯 JWT 만료시간 검증
         try {
-            const payload = JSON.parse(atob(token?.split('.')[1] || ''));
-            const currentTime = Math.floor(Date.now() / 1000);
-            console.log(
-                '🔍 토큰 만료시간:',
-                new Date(payload.exp * 1000).toLocaleString()
+            const payload = JSON.parse(
+                unicodeSafeBase64Decode(token?.split('.')[1] || '')
             );
-            console.log('🔍 현재 시간:', new Date().toLocaleString());
-
+            const currentTime = Math.floor(Date.now() / 1000);
             // 토큰 만료 확인
             if (payload.exp < currentTime) {
                 console.log('🚨 토큰 만료됨!');
                 throw new Error('Token expired');
             }
 
-            console.log('✅ 토큰 유효함');
-
             // ✅ 성공 응답
             return HttpResponse.json({
                 statusCode: 200,
                 message: '유저 정보 조회 성공',
                 data: {
-                    userId: '사용자',
-                    nickname: '오용자',
-                    profileImage:
-                        'https://randomuser.me/api/portraits/women/93.jpg',
-                    wistLikeCount: 3,
-                    description: '안녕하세요',
+                    email: payload.userInfo.email,
+                    nickname: payload.userInfo.nickname,
+                    profileImage: payload.userInfo.profileImage,
+                    wistLikeCount: payload.userInfo.wistLikeCount,
+                    description: payload.userInfo.description,
                 },
             });
         } catch (error) {
@@ -208,41 +239,42 @@ export const refreshHandlers = [
         }
         // JWT 검증
         try {
-            const payload = JSON.parse(atob(refreshToken.split('.')[1]));
-            const currentTime = Math.floor(Date.now() / 1000);
-
-            console.log(
-                '🕐 리프레쉬 토큰 만료시간:',
-                new Date(payload.exp * 1000).toLocaleString()
+            const payload = JSON.parse(
+                unicodeSafeBase64Decode(refreshToken.split('.')[1])
             );
-            console.log('🕐 현재 시간:', new Date().toLocaleString());
+            const currentTime = Math.floor(Date.now() / 1000);
 
             if (payload.exp < currentTime) {
                 console.error('❌ 리프레쉬 토큰이 만료되었습니다');
                 throw new Error('Refresh token expired');
             }
 
-            console.log('✅ 리프레쉬 토큰 검증 통과');
-
             // 새 액세스 토큰 생성
             const newAccessPayload = {
-                userId: payload.userId,
-                nickName: payload.nickName,
+                email: payload.userInfo.email,
+                nickname: payload.userInfo.nickname,
                 role: 'user',
                 iat: Math.floor(Date.now() / 1000),
                 exp: Math.floor(Date.now() / 1000) + 60, // 1분 후 만료
+                userInfo: {
+                    email: payload.userInfo.email,
+                    nickname: payload.userInfo.nickname,
+                    profileImage: payload.userInfo.profileImage,
+                    wistLikeCount: payload.userInfo.wistLikeCount,
+                    description: payload.userInfo.description,
+                },
             };
 
             const header = { alg: 'HS256', typ: 'JWT' };
             const newAccessToken =
-                btoa(JSON.stringify(header)) +
+                unicodeSafeBase64Encode(JSON.stringify(header)) +
                 '.' +
-                btoa(JSON.stringify(newAccessPayload)) +
+                unicodeSafeBase64Encode(JSON.stringify(newAccessPayload)) +
                 '.' +
                 'mock-signature';
 
             setCookie('accessToken', newAccessToken, {
-                secure: true,
+                secure: process.env.NODE_ENV === 'production',
                 sameSite: 'strict',
                 maxAge: TOKEN_EXPIRY.ACCESS_TOKEN,
                 path: '/',
