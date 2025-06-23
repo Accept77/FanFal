@@ -63,7 +63,7 @@ export const useCommentQuery = ({
 
             if (mode === 'edit' && commentId) {
                 return await commentApi.patchCommentByArticleId(articleId, {
-                    commentID: commentId,
+                    commentId: commentId,
                     secret,
                     content,
                 });

@@ -1,6 +1,6 @@
 'use client';
 
-import { useRef, useEffect } from 'react';
+import { useRef, useEffect, useState } from 'react';
 import { useForm, FieldValues, FieldError } from 'react-hook-form';
 
 import BaseModal from '@/components/ui/Modal';
@@ -13,9 +13,9 @@ import InputText from '../InputText';
 interface EditProfileModalProps {
     onClose: () => void;
     onSubmit: (data: {
-        nickname: string;
-        profileImage?: File;
-        description?: string;
+        nickName: string;
+        profileImg: File;
+        information: string;
     }) => void;
 }
 
@@ -24,6 +24,7 @@ export default function EditProfileModal({
     onSubmit,
 }: EditProfileModalProps) {
     const { data: user } = useGetUser();
+    const [isFileDialogOpen, setIsFileDialogOpen] = useState(false);
 
     const {
         register,
@@ -57,12 +58,25 @@ export default function EditProfileModal({
         : user?.profileImage || '';
 
     const handleImageClick = () => {
-        fileInputRef.current?.click();
+        setIsFileDialogOpen(true);
+
+        setTimeout(() => {
+            fileInputRef.current?.click();
+        }, 50);
     };
 
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setIsFileDialogOpen(false);
         if (e.target.files) {
             setValue('file', e.target.files, { shouldValidate: true });
+        }
+    };
+
+    const handleFileFocus = () => {
+        if (isFileDialogOpen) {
+            setTimeout(() => {
+                setIsFileDialogOpen(false);
+            }, 100);
         }
     };
 
@@ -72,15 +86,22 @@ export default function EditProfileModal({
             profileImage: data.file?.[0],
             description: data.description,
         });
+        console.log(data);
         onSubmit({
-            nickname: data.nickname,
-            profileImage: data.file?.[0],
-            description: data.description,
+            nickName: data.nickname || user?.nickName,
+            profileImg: data.file?.[0],
+            information: data.description || user?.description,
         });
     };
 
+    const handleModalClose = () => {
+        if (!isFileDialogOpen) {
+            onClose();
+        }
+    };
+
     return (
-        <BaseModal onClose={onClose}>
+        <BaseModal onClose={handleModalClose}>
             <div className="w-85.75 md:w-130 flex items-center justify-center py-6">
                 <form
                     onSubmit={handleSubmit(handleFormSubmit)}
@@ -105,6 +126,7 @@ export default function EditProfileModal({
                             accept="image/*"
                             ref={fileInputRef}
                             onChange={handleFileChange}
+                            onFocus={handleFileFocus}
                             className="hidden"
                         />
                         {errors.file && (
@@ -113,7 +135,6 @@ export default function EditProfileModal({
                             </span>
                         )}
 
-                        {/* 닉네임 입력 */}
                         <div className=" flex flex-col justify-between">
                             <p className="text-sm md:text-base font-semibold">
                                 닉네임
@@ -121,8 +142,8 @@ export default function EditProfileModal({
                             <Input
                                 type="text"
                                 name="nickname"
-                                placeholder={user?.nickname || ''}
-                                value={user?.nickname || ''}
+                                placeholder={user?.nickName || ''}
+                                value={user?.nickName || ''}
                                 register={register}
                                 className="placeholder:text-white"
                                 rules={{
@@ -135,7 +156,7 @@ export default function EditProfileModal({
                                         message: '10글자 이하로 입력해주세요.',
                                     },
                                 }}
-                                error={errors.nickname as FieldError}
+                                error={errors.nickName as FieldError}
                                 size="small"
                             />
                         </div>

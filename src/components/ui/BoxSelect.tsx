@@ -65,10 +65,11 @@ export default function BoxSelect<
                                     <input
                                         {...register(name, rules)}
                                         type="radio"
-                                        value={`${category.id},${service.id}`}
+                                        value={service.id}
                                         className="hidden peer sr-only"
                                         id={`${category.id}_${service.id}`}
                                     />
+
                                     <label
                                         htmlFor={`${category.id}_${service.id}`}
                                         className={buttonVariants()}

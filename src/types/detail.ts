@@ -2,8 +2,6 @@ export interface DetailApiResponse {
     statusCode: number;
     message: string;
     data: {
-        createUser: string;
-        createUserProfileImgUrl: string;
         title: string;
         location: string;
         latitude: number;
@@ -12,16 +10,18 @@ export interface DetailApiResponse {
         date: number;
         deadLine: number;
         createdAt: number;
-        minPerson: number;
+        min_person: number;
         currentPerson: number;
         maxPerson: number;
         participants: {
-            name: string;
-            image: string;
+            profile_image_url: string;
+            nickname: string;
         }[];
         wishList: boolean;
         articleImageUrl: string;
-        openStatus: 'waiting' | 'finished' | 'progressing' | 'canceled';
-        useStatus: 'UPCOMING' | 'COMPLETED';
+        openStatus: 'CONFIRMED_STATUS' | 'PENDING_STATUS' | 'CANCELED_STATUS';
+        useStatus: 'UPCOMING_STATUS' | 'COMPLETED_STATUS';
+        nickName: 'string';
+        writerImageUrl: 'string';
     };
 }

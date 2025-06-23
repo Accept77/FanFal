@@ -1,6 +1,6 @@
 'use client';
 
-import { Button } from '@/components/ui';
+import { Button, CustomSkeleton } from '@/components/ui';
 import { getConcertDetail } from '@/utils/apis/concert';
 import { useQuery } from '@tanstack/react-query';
 import Image from 'next/image';
@@ -26,10 +26,9 @@ export default function ConcertDetailPage() {
         queryKey: ['concertDetail', id],
         queryFn: () => getConcertDetail(id as string),
     });
-    console.log(data);
 
     if (isLoading) {
-        return <div>Loading...</div>;
+        return <CustomSkeleton layout="detail" />;
     }
     if (isError) {
         return <div>Error</div>;
@@ -116,7 +115,7 @@ export default function ConcertDetailPage() {
                     </div>
                 </div>
                 <hr className="border-t border-gray-800" />
-                <div className="flex xl:flex-row flex-col gap-8 xl:items-start items-center">
+                <div className="flex xl:flex-row flex-col gap-8 xl:items-start items-center xl:pb-0 pb-26">
                     <div className="relative w-fit">
                         {Array.isArray(data?.styurls.styurl) ? (
                             data?.styurls.styurl.map((item, index) => (

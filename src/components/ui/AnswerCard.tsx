@@ -8,7 +8,7 @@ interface AnswerCardProps {
     createdAt: number;
     comment: string;
     answer: boolean;
-    fanpalId: number;
+    articleId: number;
 }
 
 export default function AnswerCard({
@@ -17,7 +17,7 @@ export default function AnswerCard({
     createdAt,
     comment,
     answer,
-    fanpalId,
+    articleId,
 }: AnswerCardProps) {
     return (
         <div className="bg-gray-900 px-7 py-8  rounded-2xl flex flex-col justify-between">
@@ -50,7 +50,7 @@ export default function AnswerCard({
                             답변 완료
                         </Button>
                     ) : (
-                        <Link href={`/panpal/${fanpalId}`}>
+                        <Link href={`/panpal/${articleId}`}>
                             <Button
                                 styled="outline"
                                 size="small"

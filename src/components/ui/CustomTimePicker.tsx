@@ -58,6 +58,7 @@ export default function CustomTimeInput({
                 <div className="border-l border-gray-800 custom-scrollbar-datepicker items-center h-[231px] w-[52px] flex flex-col gap-2 overflow-y-auto bg-gray-800 md:bg-gray-900">
                     {[12, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11].map((hour) => (
                         <button
+                            type="button"
                             key={hour}
                             onClick={() =>
                                 handleTimeChange(hour, minute5, period)
@@ -80,6 +81,7 @@ export default function CustomTimeInput({
                     {Array.from({ length: 12 }, (_, i) => i * 5).map(
                         (minute) => (
                             <button
+                                type="button"
                                 key={minute}
                                 onClick={() =>
                                     handleTimeChange(hour12, minute, period)
@@ -105,6 +107,7 @@ export default function CustomTimeInput({
                 <div className="border-l border-gray-800 flex md:flex-col flex-row gap-2 pl-[12px] md:h-[231px]">
                     {['오후', '오전'].map((p) => (
                         <button
+                            type="button"
                             key={p}
                             onClick={() => handleTimeChange(hour12, minute5, p)}
                             className={`px-2 py-[6px] text-center text-sm rounded-lg transition-colors bg-gray-900 whitespace-nowrap ${

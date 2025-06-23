@@ -44,7 +44,7 @@ export interface SignupData {
 // 유저 정보
 export interface User {
     userId: string;
-    nickname: string;
+    nickName: string;
     profileImage?: string;
     wistLikeCount?: number;
     description?: string;

@@ -12,6 +12,8 @@ type CommentType = {
     deleted: boolean;
     createdAt: number;
     secret: boolean;
+    nickName: string;
+    writerImageUrl: string;
     children?: CommentType[];
 };
 
@@ -59,8 +61,8 @@ function CommentItem({
     onSelectMenu,
 }: CommentProps) {
     const { data: user } = useGetUser();
-    const isAuthor = comment.writerId === createUserId;
-    const isMyComment = comment.writerId === user?.nickname;
+    const isAuthor = comment.nickName === createUserId;
+    const isMyComment = comment.nickName === user?.nickName;
 
     const getDropdownOptions = () => {
         if (isMyComment) {
@@ -81,9 +83,9 @@ function CommentItem({
 
                 <div className="flex flex-col flex-1 text-sm">
                     <div className="h-[24px] flex items-center gap-2">
-                        <Profile size="small" />
+                        <Profile size="small" image={comment.writerImageUrl} />
                         <span className="font-normal text-sm text-gray-300">
-                            {comment.writerId}
+                            {comment.nickName}
                         </span>
                         {isAuthor && (
                             <span className="bg-gray-800 text-green-400 text-xs font-medium px-3 py-1 rounded-[1000px]">
@@ -108,7 +110,7 @@ function CommentItem({
                     </div>
 
                     <div className="text-xs font-light text-gray-600">
-                        {new Date(comment.createdAt).toLocaleString()}
+                        {new Date(comment.createdAt * 1000).toLocaleString()}
                     </div>
                 </div>
 

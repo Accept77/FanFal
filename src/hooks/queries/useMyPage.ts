@@ -10,16 +10,14 @@ import {
     QuestionListResponse,
     SelfMypageResponse,
     AnswerListResponse,
+    ProfileEditRequest,
 } from '@/types/myPage';
+import { toast } from 'react-toastify';
 
 export const useChangeProfileMutation = () => {
     const queryClient = useQueryClient();
     return useMutation({
-        mutationFn: (data: {
-            nickname: string;
-            profileImage?: File;
-            description?: string;
-        }) => mypageApi.changeProfile(data),
+        mutationFn: (data: ProfileEditRequest) => mypageApi.changeProfile(data),
         onSuccess: () => {
             console.log('프로필 변경 성공');
             queryClient.invalidateQueries({ queryKey: ['user'] });
@@ -32,7 +30,7 @@ export const useChangeProfileMutation = () => {
 
 export const useChangePasswordMutation = () => {
     return useMutation({
-        mutationFn: (data: { currentPassword: string; newPassword: string }) =>
+        mutationFn: (data: { password: string; newPassword: string }) =>
             mypageApi.changePassword(data),
         onSuccess: () => {
             console.log('비밀번호 변경 성공');
@@ -43,26 +41,25 @@ export const useChangePasswordMutation = () => {
     });
 };
 
-export const useGetMyPage = (
-    currentPage: number,
-    lastArticleId: number | null,
-    pageSize: number
-) => {
+export const useGetMyPage = (currentPage: number, pageSize: number) => {
     return useQuery<MyPageResponse>({
         queryKey: ['mypage', currentPage],
-        queryFn: () => mypageApi.getMypage(lastArticleId, pageSize),
+        queryFn: () => mypageApi.getMypage(currentPage, pageSize),
+        gcTime: 0,
     });
 };
 
 export const useDeleteMypageMutation = () => {
     const queryClient = useQueryClient();
     return useMutation({
-        mutationFn: (fanpal_id: number) => mypageApi.deleteMypage(fanpal_id),
+        mutationFn: (articleId: number) => mypageApi.deleteMypage(articleId),
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['mypage'] });
+            toast.success('팬팔 삭제가 완료되었습니다.');
         },
         onError: (error) => {
             console.error('팬팔 삭제 실패:', error);
+            toast.error('팬팔 삭제에 실패했습니다.');
         },
     });
 };
@@ -70,24 +67,22 @@ export const useDeleteMypageMutation = () => {
 export const useCancelMypageMutation = () => {
     const queryClient = useQueryClient();
     return useMutation({
-        mutationFn: (fanpal_id: number) => mypageApi.cancelMypage(fanpal_id),
+        mutationFn: (articleId: number) => mypageApi.cancelMypage(articleId),
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['mypage'] });
+            toast.success('팬팔 취소가 완료되었습니다.');
         },
         onError: (error) => {
             console.error('팬팔 취소 실패:', error);
+            toast.error('팬팔 취소에 실패했습니다.');
         },
     });
 };
 
-export const useGetSelfMypage = (
-    currentPage: number,
-    lastArticleId: number | null,
-    pageSize: number
-) => {
+export const useGetSelfMypage = (currentPage: number, pageSize: number) => {
     return useQuery<SelfMypageResponse>({
         queryKey: ['mypageSelf', currentPage],
-        queryFn: () => mypageApi.getSelfMypage(lastArticleId, pageSize),
+        queryFn: () => mypageApi.getSelfMypage(currentPage, pageSize),
     });
 };
 
@@ -110,8 +105,8 @@ export const useGetAnswer = (pageParam: number | null, pageSize: number) => {
         queryFn: ({ pageParam }) =>
             mypageApi.getAnswer(pageParam as number | null, pageSize),
         getNextPageParam: (lastPage) => {
-            if (lastPage.data.length === 0) return undefined;
-            return lastPage.data[lastPage.data.length - 1].fanpal_id;
+            if (lastPage.data.data.length === 0) return undefined;
+            return lastPage.data.data[lastPage.data.data.length - 1].articleId;
         },
         initialPageParam: 1,
     });

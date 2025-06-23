@@ -26,11 +26,12 @@ export const imageUploadApi = {
     getUploadUrl: async (
         params: PostImageRequest
     ): Promise<PostImageResponse> => {
-        return customFetcher<PostImageResponse, PostImageRequest>(
-            `/api/images/postImage`,
+        const query = new URLSearchParams({ fileName: params.fileName });
+
+        return customFetcher<PostImageResponse, undefined>(
+            `/api/images/postImage?${query.toString()}`,
             {
-                method: 'POST',
-                body: params,
+                method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
                 },

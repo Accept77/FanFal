@@ -35,14 +35,14 @@ export const authApi = {
         return customFetcher<
             ApiResponse<SignupMemberResponseDto> | ApiFailure,
             SignupMemberRequestDto
-        >(`${BASE_URL}/signup`, {
+        >(`/api/auth/signup`, {
             method: 'POST',
             body: signupData,
         });
     },
     // 유저 정보 조회
     getUser: async () => {
-        return customFetcher<ApiResponse<User>, void>(`/api/auth/user`, {
+        return customFetcher<ApiResponse<User>, void>(`/api/myPage/user`, {
             method: 'GET',
         });
     },

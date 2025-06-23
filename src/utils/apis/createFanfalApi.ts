@@ -1,20 +1,20 @@
 import { customFetcher } from '@/utils/apis/customFetcher';
 
-interface BoardRequest {
+export interface BoardRequest {
     title: string;
     roadNameAddress: string;
     latitude: number;
     longitude: number;
     imageKey: string;
     description: string;
-    smallCategory: string; // enum?
+    smallCategory: string;
     date: number;
     deadline: number;
     minPerson: number;
     maxPerson: number;
 }
 
-interface BoardResponse {
+export interface BoardResponse {
     statusCode: number;
     message: string;
     data: string | null;

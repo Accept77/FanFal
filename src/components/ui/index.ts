@@ -22,6 +22,7 @@ import InputFile from './InputFile';
 import PanpalModal from './Modal/PanpalModal';
 import ProfileSection from './ProfileSection';
 import Dropdown from './Dropdown';
+import CustomSkeleton from './CustomSkeleton';
 
 export {
     Button,
@@ -48,4 +49,5 @@ export {
     PanpalModal,
     ProfileSection,
     Dropdown,
+    CustomSkeleton,
 };

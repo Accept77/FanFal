@@ -1,33 +1,33 @@
 export type Card = {
-    fanpal_id: number;
+    articleId: number;
     title: string;
     location: string;
     date: number; // api 명세서 ...
     deadLine: number;
     currentPerson: number;
     maxPerson: number;
-    openStatus: 'waiting' | 'finished' | 'progressing';
+    openStatus: 'PENDING_STATUS' | 'CONFIRMED_STATUS' | 'CANCELED_STATUS';
     wishList: boolean;
     image: string;
     createUser: string;
     createUserProfileImg: string;
-    useStatus: 'UPCOMING' | 'COMPLETED';
+    useStatus: 'UPCOMING_STATUS' | 'COMPLETED_STATUS';
     createdAt: number;
 };
 
 export type SelfCard = {
-    fanpal_id: number;
+    articleId: number;
     title: string;
     location: string;
     date: number;
-    deadline: number;
+    deadLine: number;
     createdAt: number;
     currentPerson: number;
     maxPerson: number;
-    openStatus: 'waiting' | 'finished' | 'progressing';
+    openStatus: 'PENDING_STATUS' | 'CONFIRMED_STATUS' | 'CANCELED_STATUS';
     wishList: boolean;
     image: string;
-    useStatus: 'UPCOMING' | 'COMPLETED';
+    useStatus: 'UPCOMING_STATUS' | 'COMPLETED_STATUS';
     createUser: string;
     createUserProfileImg: string;
     totalPage: number;
@@ -48,7 +48,7 @@ export type Question = {
 };
 
 export type Answer = {
-    fanpal_id: number;
+    articleId: number;
     title: string;
     location: string;
     createdAt: number;
@@ -57,13 +57,21 @@ export type Answer = {
 };
 
 export interface MyPageResponse {
-    totalPage: number;
-    data: Card[];
+    data: {
+        data: Card[];
+        totalCount: number;
+    };
+    message: string;
+    statusCode: number;
 }
 
 export interface SelfMypageResponse {
-    totalPage: number;
-    data: SelfCard[];
+    data: {
+        data: SelfCard[];
+        totalCount: number;
+    };
+    message: string;
+    statusCode: number;
 }
 
 export interface QuestionListResponse {
@@ -72,6 +80,19 @@ export interface QuestionListResponse {
 }
 
 export interface AnswerListResponse {
-    totalCount: number;
-    data: Answer[];
+    data: {
+        data: Answer[];
+        totalCount: number;
+    };
+    message: string;
+    statusCode: number;
+}
+
+export interface ProfileEditRequest {
+    userId?: string;
+    nickName?: string;
+    email?: string;
+    information?: string;
+    password?: string;
+    profileImgUrl?: string;
 }

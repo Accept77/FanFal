@@ -22,10 +22,10 @@ export const CATEGORY_DATA: Category[] = [
         id: 'DOING_TYPE',
         title: '같이 해요',
         smallCategory: [
-            { id: 'TOGETHER_TYPE', name: '팝업' },
-            { id: 'BIRTHDAY_TYPE', name: '생일카페' },
-            { id: 'ONLINE_TYPE', name: '온라인콘서트' },
-            { id: 'TOUR_TYPE', name: '덕질투어' },
+            { id: 'POPUP_TYPE', name: '팝업' },
+            { id: 'BIRTHDAYCAFE_TYPE', name: '생일카페' },
+            { id: 'ONLINECONCERT_TYPE', name: '온라인콘서트' },
+            { id: 'FANDOMTOUR_TYPE', name: '덕질투어' },
         ],
     },
 ];

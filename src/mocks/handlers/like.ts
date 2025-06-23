@@ -1,10 +1,16 @@
 import { http, HttpResponse } from 'msw';
 
 export const wishLikeHandlers = [
-    http.post('http://localhost:3000/api/wishLike', async ({ request }) => {
-        const body = (await request.json()) as { articleIds: number[] };
+    http.post('http://localhost:3000/api/wishlike', async ({ request }) => {
+        const body = (await request.json()) as {
+            article_ids?: number[];
+        } | null;
 
-        if (!body.articleIds || !Array.isArray(body.articleIds)) {
+        if (
+            !body ||
+            !Array.isArray(body.article_ids) ||
+            body.article_ids.length === 0
+        ) {
             return HttpResponse.json(
                 { statusCode: 400, message: '잘못된 요청입니다.', data: '' },
                 { status: 400 }
@@ -19,7 +25,7 @@ export const wishLikeHandlers = [
     }),
 
     http.delete(
-        'http://localhost:3000/api/wishLike/:articleId',
+        'http://localhost:3000/api/wishlike/:articleId',
         ({ params }) => {
             const { articleId } = params;
 

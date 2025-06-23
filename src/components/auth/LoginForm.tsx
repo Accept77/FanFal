@@ -13,11 +13,11 @@ export default function LoginForm() {
             mode: 'onBlur',
             reValidateMode: 'onBlur',
         });
-    const { mutate: login, isPending } = useLogin();
+    const { mutate: login, isPending, isSuccess } = useLogin();
     const isMobile = useMediaQuery('(max-width: 768px)');
     const onSubmit: SubmitHandler<LoginFormData> = (data) => {
         //로그인 요청 중에는 다시 요청하지 않도록 처리
-        if (isPending) return;
+        if (isPending || isSuccess) return;
         //로그인 요청
         login(
             {
@@ -99,7 +99,9 @@ export default function LoginForm() {
                             <Button
                                 type="submit"
                                 className="w-full mb-6"
-                                disabled={!isAllFieldsFilled || isPending}
+                                disabled={
+                                    !isAllFieldsFilled || isPending || isSuccess
+                                }
                             >
                                 로그인
                             </Button>

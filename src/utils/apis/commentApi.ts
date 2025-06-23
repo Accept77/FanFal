@@ -26,6 +26,8 @@ interface CommentData {
     deleted: boolean;
     createdAt: number;
     secret: boolean;
+    nickName: string;
+    writerImageUrl: string;
 }
 
 interface GetCommentsResponse {
@@ -44,7 +46,6 @@ export const commentApi = {
             {
                 method: 'POST',
                 body,
-                auth: true,
                 headers: {
                     'Content-Type': 'application/json',
                 },
@@ -54,14 +55,14 @@ export const commentApi = {
 
     patchCommentByArticleId: async (
         articleId: number,
-        body: { commentID: number; secret: boolean; content: string }
+        body: { commentId: number; secret: boolean; content: string }
     ): Promise<PostCommentResponse> => {
         return customFetcher<PostCommentResponse, typeof body>(
             `/api/board/${articleId}/comment`,
             {
                 method: 'PATCH',
-                body,
                 auth: true,
+                body,
                 headers: {
                     'Content-Type': 'application/json',
                 },

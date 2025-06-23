@@ -18,8 +18,6 @@ export default function ProfileSection({
     const { data: user } = useGetUser();
     const [isMdUp, setIsMdUp] = useState(false);
 
-    console.log('user', user);
-
     useEffect(() => {
         const handleResize = () => {
             setIsMdUp(window.innerWidth >= 640);
@@ -50,7 +48,7 @@ export default function ProfileSection({
                         </div>
                         <div className="h-8 flex items-center overflow-hidden">
                             <p className="text-xl font-semibold h-7 text-white ">
-                                {user?.nickname}
+                                {user?.nickName}
                             </p>
                             <button
                                 onClick={handleEditProfileModal}
@@ -82,7 +80,7 @@ export default function ProfileSection({
                             image={user?.profileImage || ''}
                         />
                         <p className="text-lg font-semibold h-7 text-white overflow-hidden">
-                            {user?.nickname}
+                            {user?.nickName}
                         </p>
                     </div>
 

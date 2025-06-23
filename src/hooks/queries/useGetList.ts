@@ -2,6 +2,8 @@ import { useQuery } from '@tanstack/react-query';
 import { getListApi } from '@/utils/apis/getListApi';
 import { CATEGORY_DATA } from '@/types/categories';
 import { Card } from '@/types/card';
+import { getDetailApi } from '@/utils/apis/getDetailApi';
+import { DetailApiResponse } from '@/types/detail';
 
 interface UseGetListParams {
     activeTab: number;
@@ -12,6 +14,7 @@ interface UseGetListParams {
     sortAsc: boolean;
     lastArticleId?: number;
     limit?: number;
+    page?: number;
 }
 
 export const useGetList = ({
@@ -23,6 +26,7 @@ export const useGetList = ({
     sortAsc,
     lastArticleId = 0,
     limit = 10,
+    page = 1,
 }: UseGetListParams) => {
     const queryResult = useQuery({
         queryKey: [
@@ -35,7 +39,9 @@ export const useGetList = ({
             sortAsc,
             lastArticleId,
             limit,
+            page,
         ],
+
         queryFn: async (): Promise<Card[]> => {
             const bigCategory = CATEGORY_DATA[activeTab].id;
 
@@ -51,7 +57,9 @@ export const useGetList = ({
                 sortAsc,
                 lastArticleId,
                 limit,
+                page,
             });
+            console.log('이건데 없어 ? API 응답 데이터:', response.data); // 여기에 찍어서 응답 확인
 
             return response.data;
         },
@@ -64,4 +72,14 @@ export const useGetList = ({
     });
 
     return queryResult;
+};
+
+export const useGetDetail = ({ id }: { id: number }) => {
+    return useQuery<DetailApiResponse['data']>({
+        queryKey: ['articles', id],
+        queryFn: async () => {
+            const response = await getDetailApi.getDetailById(id);
+            return response;
+        },
+    });
 };

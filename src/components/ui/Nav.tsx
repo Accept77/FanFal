@@ -56,6 +56,7 @@ export default function Nav() {
     }, [isDropdownOpen]);
 
     const handleLogout = () => {
+        useWishlistStore.getState().reset();
         logout(undefined, {
             onSuccess: () => {
                 //router.push('/login');

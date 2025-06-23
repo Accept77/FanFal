@@ -74,9 +74,13 @@ export default function QuestionCard({
             </div>
             <div className="flex flex-col gap-2 min-w-18 items-end">
                 {answer ? (
-                    <ProgressChip openStatus="finished">답변 완료</ProgressChip>
+                    <ProgressChip openStatus="CONFIRMED_STATUS">
+                        답변 완료
+                    </ProgressChip>
                 ) : (
-                    <ProgressChip openStatus="waiting">답변 대기</ProgressChip>
+                    <ProgressChip openStatus="PENDING_STATUS">
+                        답변 대기
+                    </ProgressChip>
                 )}
             </div>
         </div>

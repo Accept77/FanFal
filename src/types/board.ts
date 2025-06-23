@@ -9,6 +9,7 @@ export type getListApiParams = {
     sortAsc: boolean;
     lastArticleId: number;
     limit: number;
+    page: number;
 };
 
 export type getListApiResponse = {

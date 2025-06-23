@@ -8,21 +8,20 @@ import { ProgressChip } from '@/components/ui';
 import { cva } from 'class-variance-authority';
 import Button from './Button';
 
-interface CardListProps {
+interface MyCardListProps {
     title: string;
     location: string;
     date: number;
     currentPerson: number;
     maxPerson: number;
-    openStatus: 'waiting' | 'finished' | 'progressing' | 'canceled';
+    openStatus: 'PENDING_STATUS' | 'CONFIRMED_STATUS' | 'CANCELED_STATUS';
     image: string;
-    createUser: string;
-    createUserProfileImg: string;
-    useStatus: 'UPCOMING' | 'COMPLETED';
+    nickName: string;
+    writerImageUrl: string;
+    useStatus: 'UPCOMING_STATUS' | 'COMPLETED_STATUS';
     buttonOnClick: () => void;
 }
-
-export default function CardList({
+export default function MyCardList({
     title,
     location,
     date,
@@ -30,11 +29,11 @@ export default function CardList({
     maxPerson,
     openStatus,
     image,
-    createUser,
-    createUserProfileImg,
+    nickName,
+    writerImageUrl,
     useStatus,
     buttonOnClick,
-}: CardListProps) {
+}: MyCardListProps) {
     const convertedDate = dateConverter(date, 'korea');
 
     // 현재 시간과 이벤트 날짜 비교하여 deadline 계산
@@ -52,30 +51,29 @@ export default function CardList({
         {
             variants: {
                 useStatus: {
-                    COMPLETED: '',
-                    UPCOMING: '',
+                    COMPLETED_STATUS: '',
+                    UPCOMING_STATUS: '',
                 },
                 openStatus: {
-                    waiting: '',
-                    finished: '',
-                    progressing: '',
-                    canceled: '',
+                    PENDING_STATUS: '',
+                    CONFIRMED_STATUS: '',
+                    CANCELED_STATUS: '',
                 },
             },
             compoundVariants: [
                 {
-                    useStatus: ['UPCOMING', 'COMPLETED'],
-                    openStatus: 'canceled',
+                    useStatus: ['UPCOMING_STATUS', 'COMPLETED_STATUS'],
+                    openStatus: 'CANCELED_STATUS',
                     className: 'text-gray-600',
                 },
                 {
-                    useStatus: 'COMPLETED',
-                    openStatus: ['waiting', 'finished', 'progressing'],
+                    useStatus: 'COMPLETED_STATUS',
+                    openStatus: ['PENDING_STATUS', 'CONFIRMED_STATUS'],
                     className: 'text-gray-600',
                 },
                 {
-                    useStatus: 'UPCOMING',
-                    openStatus: ['waiting', 'finished', 'progressing'],
+                    useStatus: 'UPCOMING_STATUS',
+                    openStatus: ['PENDING_STATUS', 'CONFIRMED_STATUS'],
                     className: 'text-white',
                 },
             ],
@@ -86,7 +84,7 @@ export default function CardList({
         <div className="w-full flex flex-col sm:flex-row sm:py-3 sm:pl-3 sm:pr-6 sm:gap-6 gap-0 sm:min-h-67.5 min-h-97">
             <div className="w-full sm:w-1/4 relative h-50 sm:h-auto">
                 <Image src={image} alt="image" fill objectFit="cover" />
-                {openStatus === 'canceled' ? (
+                {openStatus === 'CANCELED_STATUS' ? (
                     <div className="absolute bg-black/50 w-full h-full flex flex-col justify-center items-center gap-6">
                         <HandIcon className="w-8 h-8 text-gray-600 fill-white" />
                         <div className="flex justify-center items-center text-gray-100 text-sm text-center">
@@ -103,7 +101,7 @@ export default function CardList({
                 <div className="flex flex-row gap-3 sm:flex-col justify-between items-end sm:items-stretch">
                     <div className="flex sm:h-fit h-7 order-2 sm:order-1">
                         <ChipState status={useStatus}>
-                            {useStatus === 'UPCOMING'
+                            {useStatus === 'UPCOMING_STATUS'
                                 ? '이용 예정'
                                 : '이용 완료'}
                         </ChipState>
@@ -130,11 +128,8 @@ export default function CardList({
                             </div>
                         </div>
                         <div className="flex gap-2 text-sm text-gray-400 items-center font-normal ">
-                            <Profile
-                                size="small"
-                                image={createUserProfileImg}
-                            />
-                            <div>{createUser}</div>
+                            <Profile size="small" image={writerImageUrl} />
+                            <div>{nickName}</div>
                         </div>
                     </div>
                 </div>
@@ -152,15 +147,15 @@ export default function CardList({
                                 {currentPerson} / {maxPerson}
                             </div>
                         </div>
-                        {useStatus === 'UPCOMING' && (
+                        {useStatus === 'UPCOMING_STATUS' && (
                             <ProgressChip openStatus={openStatus}>
                                 개설확정
                             </ProgressChip>
                         )}
                     </div>
                     <div className="flex sm:w-48 w-full">
-                        {useStatus === 'UPCOMING' &&
-                            (openStatus === 'canceled' ? (
+                        {useStatus === 'UPCOMING_STATUS' &&
+                            (openStatus === 'CANCELED_STATUS' ? (
                                 <Button
                                     size="large"
                                     styled="outline"

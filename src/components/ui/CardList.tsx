@@ -5,9 +5,8 @@ import ContainerProgress from './ContainerProgress';
 import Like from './Like';
 import Tag from './Tag';
 import { HandIcon } from '@/assets';
-import { useWishlistStore } from '@/store/wishlistStore';
 import { useGetUser } from '@/hooks/queries/useAuth';
-import { wishLikeApi } from '@/utils/apis/likeApi';
+import { useLike } from '@/hooks/useLike';
 
 interface CardListProps {
     title: string;
@@ -16,7 +15,11 @@ interface CardListProps {
     deadLine: number;
     currentPerson: number;
     maxPerson: number;
-    openStatus: 'waiting' | 'finished' | 'progressing' | 'canceled';
+    openStatus:
+        | 'CONFIRMED_STATUS'
+        | 'PENDING_STATUS'
+        | 'CANCELED_STATUS'
+        | 'PROGRESSING_STATUS';
     wishList?: boolean;
     image: string;
     createUser: string;
@@ -38,59 +41,58 @@ export default function CardList({
     createUserProfileImg,
     onLikeClick,
     articleId,
-    wishList,
+    wishList = true,
 }: CardListProps) {
     const { data: user } = useGetUser();
     const isLoggedIn = !!user;
-    const convertedDate = dateConverter(Number(date), 'korea'); // date?
+    const { isLiked, toggleLike } = useLike(articleId, {
+        isLoggedIn,
+        onLikeClick,
+    });
+
+    const convertedDate = dateConverter(Number(date), 'korea');
     const convertedDeadLine = dateConverter(Number(deadLine), 'korea-short');
-    const isLiked = useWishlistStore((state) => state.isLiked(articleId));
-    const addLike = useWishlistStore((state) => state.addLike);
-    const removeLike = useWishlistStore((state) => state.removeLike);
 
-    const handleLikeClick = async (event: React.MouseEvent) => {
-        event.preventDefault();
-        event.stopPropagation();
+    const getDeadlineText = () => {
+        if (!deadLine) return null;
 
-        try {
-            if (isLoggedIn) {
-                if (isLiked) {
-                    await wishLikeApi.unlike(articleId);
-                } else {
-                    await wishLikeApi.like([articleId]);
-                }
-            }
+        const now = new Date();
+        const deadline = new Date(deadLine * 1000);
 
-            // 로컬 store도 항상 업데이트
-            if (isLiked) {
-                removeLike(articleId);
-            } else {
-                addLike(articleId);
-            }
+        const nowDate = new Date(
+            now.getFullYear(),
+            now.getMonth(),
+            now.getDate()
+        );
+        const deadlineDate = new Date(
+            deadline.getFullYear(),
+            deadline.getMonth(),
+            deadline.getDate()
+        );
 
-            onLikeClick?.(event, !isLiked);
-        } catch (error) {
-            console.error('찜 처리 중 오류 발생:', error);
+        if (nowDate.getTime() === deadlineDate.getTime()) {
+            const deadlineHour = deadline.getHours();
+            return `오늘 ${deadlineHour}시 마감`;
         }
+
+        return null;
     };
 
-    // 박수 아이콘 white 적용안됨 전에 프로플 에디트도 됐다가 안된거 같은데 svg 파일 문젠거같음 체크해봐야할듯 원인파악
     return (
         <div className="w-full flex flex-col sm:flex-row sm:py-3 sm:pl-3 sm:pr-6 sm:gap-6 gap-0 sm:min-h-67.5 min-h-97 hover:bg-gray-900 active:opacity-50 hover:cursor-pointer">
             <div className="w-full sm:w-1/4 relative h-50 sm:h-auto">
                 <Image src={image} alt="image" fill objectFit="cover" />
-                {openStatus === 'finished' ? (
-                    <div className="absolute bg-black/50 w-full h-full flex flex-col justify-center items-center gap-6">
-                        <HandIcon className="w-8 h-8 text-gray-600 fill-white" />
+                {openStatus === 'CONFIRMED_STATUS' && (
+                    <div className="absolute bg-black/80 w-full h-full flex flex-col justify-center items-center gap-6">
+                        <HandIcon width={32} height={32} />
                         <div className="flex justify-center items-center text-gray-100 text-sm text-center">
                             모집이 마감되었어요.
                             <br />
                             다음기회에 만나요!
                         </div>
                     </div>
-                ) : (
-                    <Tag>오늘 12시 마감</Tag>
                 )}
+                {getDeadlineText() && <Tag>{getDeadlineText()}</Tag>}
             </div>
             <div className="sm:w-3/4 w-full flex flex-col justify-between pt-5.5 sm:gap-0 gap-5">
                 <div className="flex justify-between">
@@ -121,11 +123,11 @@ export default function CardList({
                             <p>{createUser}</p>
                         </div>
                     </div>
-                    <div>
-                        {wishList && (
-                            <Like like={isLiked} onClick={handleLikeClick} />
-                        )}
-                    </div>
+                    {wishList && (
+                        <div>
+                            <Like like={isLiked} onClick={toggleLike} />
+                        </div>
+                    )}
                 </div>
                 <ContainerProgress
                     current={currentPerson}

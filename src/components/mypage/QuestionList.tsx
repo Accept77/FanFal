@@ -1,6 +1,6 @@
 'use client';
 
-import { QuestionCard } from '../ui';
+import { QuestionCard, CustomSkeleton } from '../ui';
 import { BlankScreen } from '@/components/mypage';
 import { useCallback, useRef, useMemo } from 'react';
 import { useGetQuestion } from '@/hooks/queries/useMyPage';
@@ -39,7 +39,7 @@ export default function QuestionList() {
         return data?.pages.flatMap((page) => page.data) || [];
     }, [data?.pages]);
 
-    if (isLoading) return <div>Loading...</div>;
+    if (isLoading) return <CustomSkeleton layout="comment" count={6} />;
     if (isError) return <div>Error</div>;
 
     return (

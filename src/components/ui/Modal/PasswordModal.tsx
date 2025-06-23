@@ -15,7 +15,7 @@ import {
 
 interface PasswordModalProps {
     onClose: () => void;
-    onSubmit: (data: { currentPassword: string; newPassword: string }) => void;
+    onSubmit: (data: { password: string; newPassword: string }) => void;
 }
 
 export default function PasswordModal({
@@ -41,7 +41,7 @@ export default function PasswordModal({
 
         console.log('비밀번호 변경 정보', data);
         onSubmit({
-            currentPassword: data.currentPassword,
+            password: data.password,
             newPassword: data.newPassword,
         });
     };
@@ -62,13 +62,13 @@ export default function PasswordModal({
                                 <p>현재 비밀번호</p>
                                 <Input
                                     type="password"
-                                    name="currentPassword"
+                                    name="password"
                                     placeholder="현재 비밀번호를 입력해주세요."
                                     register={register}
                                     rules={{
                                         required: '현재 비밀번호는 필수입니다.',
                                     }}
-                                    error={errors.currentPassword as FieldError}
+                                    error={errors.password as FieldError}
                                     size="small"
                                 />
                             </div>

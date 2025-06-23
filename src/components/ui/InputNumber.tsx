@@ -137,7 +137,7 @@ export default function InputNumber<
     control,
     error,
     labelClassName, //라벨 클래스
-    min = 1,
+    min = 2,
     max = 20,
     step = 1,
 }: InputNumberProps<TFormValues>) {

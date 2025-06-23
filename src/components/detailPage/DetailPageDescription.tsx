@@ -9,6 +9,11 @@ interface DetailPageDescriptionProps {
     longitude: number;
     articleId: number;
     createUser: string;
+    participants: {
+        profile_image_url: string;
+        nickname: string;
+    }[];
+    refetch?: () => void;
 }
 
 export default function DetailPageDescription({
@@ -17,6 +22,8 @@ export default function DetailPageDescription({
     longitude,
     articleId,
     createUser,
+    participants,
+    refetch,
 }: DetailPageDescriptionProps) {
     return (
         <div className="xl:flex xl:gap-6 ">
@@ -44,6 +51,8 @@ export default function DetailPageDescription({
             <DetailPageParticipation
                 articleId={articleId}
                 createUser={createUser}
+                participants={participants}
+                refetch={refetch}
             />
         </div>
     );

@@ -12,8 +12,6 @@ const BASE_URL = 'http://localhost:3000'; // 추후 백엔드 서버로 변경
 
 export const loginHandlers = [
     http.post(`${BASE_URL}/api/auth/login`, async ({ request }) => {
-        console.log('loginHandlers 호출');
-
         const loginData = (await request.json()) as LoginRequestDto;
 
         if (
@@ -148,11 +146,6 @@ export const userHandlers = [
         try {
             const payload = JSON.parse(atob(token?.split('.')[1] || ''));
             const currentTime = Math.floor(Date.now() / 1000);
-            console.log(
-                '🔍 토큰 만료시간:',
-                new Date(payload.exp * 1000).toLocaleString()
-            );
-            console.log('🔍 현재 시간:', new Date().toLocaleString());
 
             // 토큰 만료 확인
             if (payload.exp < currentTime) {
@@ -210,12 +203,6 @@ export const refreshHandlers = [
         try {
             const payload = JSON.parse(atob(refreshToken.split('.')[1]));
             const currentTime = Math.floor(Date.now() / 1000);
-
-            console.log(
-                '🕐 리프레쉬 토큰 만료시간:',
-                new Date(payload.exp * 1000).toLocaleString()
-            );
-            console.log('🕐 현재 시간:', new Date().toLocaleString());
 
             if (payload.exp < currentTime) {
                 console.error('❌ 리프레쉬 토큰이 만료되었습니다');

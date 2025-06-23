@@ -16,6 +16,7 @@ export const getListApi = {
             sortAsc: String(params.sortAsc),
             lastArticleId: params.lastArticleId.toString(),
             limit: params.limit.toString(),
+            page: params.page.toString(),
         });
 
         return customFetcher<getListApiResponse, undefined>(

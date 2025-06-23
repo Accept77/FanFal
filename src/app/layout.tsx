@@ -27,10 +27,8 @@ export default async function RootLayout({
 }: {
     children: React.ReactNode;
 }) {
-    if (process.env.NODE_ENV === 'development') {
-        const { initMocks } = await import('@/mocks');
-        await initMocks(); // 서버 사이드 MSW 초기화
-    }
+    const { initMocks } = await import('@/mocks');
+    await initMocks(); // 서버 사이드 MSW 초기화
 
     const cookieStore = await cookies();
     const accessToken = cookieStore.get('accessToken')?.value;

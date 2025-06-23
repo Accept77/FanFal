@@ -857,20 +857,17 @@ export const mypageHandlers = [
         }
     ),
 
-    http.post(
-        'http://localhost:3000/api/mypage/profile',
-        async ({ request }) => {
-            const body = (await request.json()) as MyPageRequestBody;
-            const { nickname, profileImage, description } = body;
+    http.patch('http://localhost:3000/api/myPage', async ({ request }) => {
+        const body = (await request.json()) as MyPageRequestBody;
+        const { nickname, profileImage, description } = body;
 
-            user.nickName = nickname || 'John Doe';
-            user.img =
-                profileImage ||
-                'https://img1.daumcdn.net/thumb/R1280x0/?scode=mtistory2&fname=https%3A%2F%2Fblog.kakaocdn.net%2Fdn%2FdEviuJ%2FbtsOntsXvGE%2FPMqlJDrbVQQ2g5du7bgq1%2Fimg.png';
-            user.description = description || 'This is a description';
-            return HttpResponse.json({
-                message: 'success',
-            });
-        }
-    ),
+        user.nickName = nickname || 'John Doe';
+        user.img =
+            profileImage ||
+            'https://img1.daumcdn.net/thumb/R1280x0/?scode=mtistory2&fname=https%3A%2F%2Fblog.kakaocdn.net%2Fdn%2FdEviuJ%2FbtsOntsXvGE%2FPMqlJDrbVQQ2g5du7bgq1%2Fimg.png';
+        user.description = description || 'This is a description';
+        return HttpResponse.json({
+            message: 'success',
+        });
+    }),
 ];

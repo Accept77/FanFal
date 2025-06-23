@@ -1,10 +1,10 @@
 import { useEffect, useState } from 'react';
-import { PaginationButton } from '../ui';
+import { PaginationButton, CustomSkeleton } from '../ui';
 import ConcertCardList from './ConcertCardList';
-import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { findTotalCount, getConcertList } from '@/utils/apis/concert';
-import { Concert } from '@/types/concert';
+import { useQueryClient } from '@tanstack/react-query';
+import { getConcertList } from '@/utils/apis/concert';
 import { BlankScreen } from '../mypage';
+import { useConcert, useTotalCount } from '@/hooks/queries/useConcert';
 
 export default function CardContainer({
     startDate,
@@ -21,20 +21,12 @@ export default function CardContainer({
         data: concertList,
         isLoading,
         isError,
-    } = useQuery<Concert[]>({
-        queryKey: ['concerts', currentPage, location, startDate, endDate],
-        queryFn: () =>
-            getConcertList(currentPage, startDate, endDate, location),
-        staleTime: 1000 * 60 * 1,
-    });
+    } = useConcert(currentPage, location, startDate, endDate);
     const {
         data: totalCount,
         isLoading: totalCountLoading,
         isError: totalCountError,
-    } = useQuery<number>({
-        queryKey: ['totalCount', location, startDate, endDate],
-        queryFn: () => findTotalCount(startDate, endDate, location),
-    });
+    } = useTotalCount(startDate, endDate, location);
 
     useEffect(() => {
         if (totalCount && currentPage <= totalCount - 2) {
@@ -48,15 +40,12 @@ export default function CardContainer({
     }, [currentPage, queryClient, totalCount, startDate, endDate, location]);
 
     if (isLoading || totalCountLoading) {
-        return (
-            <div className="flex justify-center items-center min-h-screen xl:min-w-[1060px] min-w-screen">
-                <div className="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-gray-900"></div>
-            </div>
-        );
+        return <CustomSkeleton layout="concert" count={8} />;
     }
+
     if (isError || totalCountError) {
         return (
-            <div className="flex justify-center items-center min-h-screen min-w-screen">
+            <div className="flex justify-center items-center min-h-screen xl:min-w-[1060px] min-w-screen">
                 <div className="text-red-500">
                     데이터를 불러오는데 실패했습니다.
                 </div>

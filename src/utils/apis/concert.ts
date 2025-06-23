@@ -100,8 +100,8 @@ export const findTotalCount = async (
 
     for (let i = 0; i < initialResults.length; i++) {
         if (!initialResults[i]) {
+            start = initialPages[0] + 1;
             end = initialPages[i] - 1;
-            start = initialPages[i - 1] + 1;
             break;
         }
     }

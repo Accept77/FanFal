@@ -8,6 +8,8 @@ import {
     useChangeProfileMutation,
     useChangePasswordMutation,
 } from '@/hooks/queries/useMyPage';
+import { toast } from 'react-toastify';
+import { imageUploadApi } from '@/utils/apis/imgS3Api';
 
 export default function ProfileContainer() {
     const [isPasswordModalOpen, setIsPasswordModalOpen] = useState(false);
@@ -32,20 +34,65 @@ export default function ProfileContainer() {
     };
 
     const handleSubmitPasswordModal = (data: {
-        currentPassword: string;
+        password: string;
         newPassword: string;
     }) => {
+        console.log(data);
         setIsPasswordModalOpen(false);
-        changePasswordMutation.mutate(data);
+        changePasswordMutation.mutate(data, {
+            onSuccess: () => {
+                toast.success('비밀번호가 변경되었습니다.');
+            },
+            onError: () => {
+                toast.error('비밀번호 변경에 실패했습니다.');
+            },
+        });
     };
 
-    const handleSubmitEditProfileModal = (data: {
-        nickname: string;
-        profileImage?: File;
-        description?: string;
+    const handleSubmitEditProfileModal = async (data: {
+        nickName: string;
+        profileImg: File;
+        information: string;
     }) => {
         setIsEditProfileModalOpen(false);
-        changeProfileMutation.mutate(data);
+
+        let profileImageUrl = '';
+        if (data.profileImg) {
+            try {
+                const res = await imageUploadApi.getUploadUrl({
+                    fileName: data.profileImg.name,
+                });
+                const { preSignedUrl, key } = res.data;
+
+                await fetch(preSignedUrl, {
+                    method: 'PUT',
+                    body: data.profileImg,
+                    headers: { 'Content-Type': data.profileImg.type },
+                });
+
+                profileImageUrl = key;
+            } catch (error) {
+                console.error('이미지 업로드 실패:', error);
+                toast.error('이미지 업로드에 실패했습니다.');
+                return;
+            }
+        }
+
+        changeProfileMutation.mutate(
+            {
+                nickName: data.nickName,
+                profileImgUrl: profileImageUrl,
+                information: data.information,
+            },
+            {
+                onSuccess: () => {
+                    toast.success('프로필이 변경되었습니다.');
+                },
+                onError: () => {
+                    toast.error('프로필 변경에 실패했습니다.');
+                },
+            }
+        );
     };
 
     return (

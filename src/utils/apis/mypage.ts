@@ -4,49 +4,32 @@ import {
     SelfMypageResponse,
     QuestionListResponse,
     AnswerListResponse,
+    ProfileEditRequest,
 } from '@/types/myPage';
 
-interface MypageResponse {
-    nickName: string;
-    img: string;
-    description: string;
-}
-
 export const mypageApi = {
-    getUser: async () => {
-        return customFetcher<MypageResponse, void>('/api/user', {
-            method: 'GET',
-        });
-    },
-    getMypage: async (lastArticleId: number | null, limit: number) => {
+    getMypage: async (page: number | null, limit: number) => {
         return customFetcher<
             MyPageResponse,
             { lastArticleId: number | null; limit: number }
-        >('/api/mypage', {
-            method: 'POST',
-            body: {
-                lastArticleId,
-                limit,
-            },
+        >(`/api/myPage?page=${page}&limit=${limit}`, {
+            method: 'GET',
         });
     },
-    deleteMypage: async (fanpal_id: number) => {
-        console.log('deleteMypage', fanpal_id);
-        return customFetcher<void, { fanpal_id: number }>('/api/mypage', {
-            method: 'DELETE',
-            body: { fanpal_id },
-        });
+    deleteMypage: async (articleId: number) => {
+        return customFetcher<void, { articleId: number }>(
+            `/api/myPage/${articleId}`,
+            {
+                method: 'DELETE',
+            }
+        );
     },
-    getSelfMypage: async (lastArticleId: number | null, limit: number) => {
+    getSelfMypage: async (page: number | null, limit: number) => {
         return customFetcher<
             SelfMypageResponse,
-            { lastArticleId: number | null; limit: number }
-        >('/api/mypage/self', {
-            method: 'POST',
-            body: {
-                lastArticleId,
-                limit,
-            },
+            { page: number | null; limit: number }
+        >(`/api/myPage/self?page=${page}&limit=${limit}`, {
+            method: 'GET',
         });
     },
     getQuestion: async (lastArticleId: number | null, limit: number) => {
@@ -65,41 +48,56 @@ export const mypageApi = {
         return customFetcher<
             AnswerListResponse,
             { lastArticleId: number | null; limit: number }
-        >('/api/mypage/answer', {
-            method: 'POST',
-            body: {
-                lastArticleId,
-                limit,
-            },
+        >(`/api/myPage/answer?lastArticleId=${lastArticleId}&limit=${limit}`, {
+            method: 'GET',
         });
     },
-    cancelMypage: async (fanpal_id: number) => {
-        console.log('cancelMypage', fanpal_id);
-        return customFetcher<void, { fanpal_id: number }>(
-            '/api/mypage/cancel',
+    cancelMypage: async (articleId: number) => {
+        return customFetcher<void, void>(`/api/board/${articleId}/fanFal`, {
+            method: 'DELETE',
+        });
+    },
+
+    changePassword: async (data: { password: string; newPassword: string }) => {
+        return customFetcher<void, { password: string; newPassword: string }>(
+            '/api/myPage',
             {
-                method: 'POST',
-                body: { fanpal_id },
+                method: 'PUT',
+                body: data,
+                headers: { 'Content-Type': 'application/json' },
             }
         );
     },
-    changePassword: async (data: {
-        currentPassword: string;
-        newPassword: string;
-    }) => {
-        return customFetcher<
-            void,
-            { currentPassword: string; newPassword: string }
-        >('/api/mypage/password', { method: 'POST', body: data });
+
+    changeProfile: async (data: ProfileEditRequest) => {
+        return customFetcher<void, ProfileEditRequest>('/api/myPage', {
+            method: 'PATCH',
+            body: data,
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        });
     },
-    changeProfile: async (data: {
-        nickname: string;
-        profileImage?: File;
-        description?: string;
-    }) => {
+
+    postProfileImageUrl: async (profileImage: File) => {
         return customFetcher<
-            void,
-            { nickname: string; profileImage?: File; description?: string }
-        >('/api/mypage/profile', { method: 'POST', body: data });
+            {
+                statusCode: number;
+                message: string;
+                data: { preSignedUrl: string; key: string };
+            },
+            { fileName: string }
+        >(`/api/images/postImage?fileName=${profileImage.name}`, {
+            method: 'GET',
+        });
+    },
+    putProfileImage: async (profileImage: File, url: string) => {
+        return customFetcher<void, File>(`${url}`, {
+            method: 'PUT',
+            body: profileImage,
+            headers: {
+                'Content-Type': profileImage.type,
+            },
+        });
     },
 };

@@ -12,15 +12,15 @@ export const wishLikeApi = {
      * @param articleIds number[] - 찜할 게시물 ID 리스트
      */
     like: async (articleIds: number[]): Promise<WishLikeResponse> => {
-        return customFetcher<WishLikeResponse, { articleIds: number[] }>(
-            '/api/wishLike',
+        return customFetcher<WishLikeResponse, { article_ids: number[] }>(
+            '/api/wishlike',
             {
                 method: 'POST',
                 auth: true,
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: { articleIds },
+                body: { article_ids: articleIds },
             }
         );
     },
@@ -31,7 +31,7 @@ export const wishLikeApi = {
      */
     unlike: async (articleId: number): Promise<WishLikeResponse> => {
         return customFetcher<WishLikeResponse, void>(
-            `/api/wishLike/${articleId}`,
+            `/api/wishlike/${articleId}`,
             {
                 method: 'DELETE',
                 auth: true,

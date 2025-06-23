@@ -12,7 +12,11 @@ export default function EditButton({
     color = 'gray',
 }: EditButtonProps) {
     return (
-        <button onClick={onClick} className="hover:cursor-pointer">
+        <button
+            type="button"
+            onClick={onClick}
+            className="hover:cursor-pointer"
+        >
             {color === 'green' ? (
                 <EditIcon
                     width={size === 'large' ? 32 : 18}

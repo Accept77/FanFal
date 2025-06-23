@@ -6,7 +6,6 @@ import { DeleteIcon } from '@/assets/index';
 import PlaceAutoCompleteInput from './PlaceAutoCompleteInput';
 import { CATEGORY_DATA } from '@/types/categories';
 import { imageUploadApi } from '@/utils/apis/imgS3Api';
-import { createBoardApi } from '@/utils/apis/createFanfalApi';
 import { toast } from 'react-toastify';
 import {
     InputText,
@@ -17,6 +16,7 @@ import {
     InputFile,
     Button,
 } from '@/components/ui';
+import { useCreateFanfalMutation } from '@/hooks/queries/useCreateFanfalMutation';
 
 interface PanpalModalProps {
     onClose: () => void;
@@ -53,7 +53,7 @@ interface FormData {
     maxApplicants: number;
 }
 
-export default function PanpalModal({ onClose, onSubmit }: PanpalModalProps) {
+export default function PanpalModal({ onClose }: PanpalModalProps) {
     const {
         register,
         handleSubmit,
@@ -69,7 +69,7 @@ export default function PanpalModal({ onClose, onSubmit }: PanpalModalProps) {
     });
 
     const startDate = watch('startDate');
-
+    const { mutate: createFanfal } = useCreateFanfalMutation();
     const onFormSubmit = async (data: FormData) => {
         let imageKey = '';
 
@@ -103,26 +103,31 @@ export default function PanpalModal({ onClose, onSubmit }: PanpalModalProps) {
             imageKey,
             description: data.detail,
             smallCategory: data.category.split(',')[0], // 필요 시 enum 변환
-            date: data.startDate ? data.startDate.getTime() : 0, // timestamp number 로 변환
-            deadline: data.endDate ? data.endDate.getTime() : 0,
+            date: data.startDate
+                ? Math.floor(data.startDate.getTime() / 1000)
+                : 0,
+            deadline: data.endDate
+                ? Math.floor(data.endDate.getTime() / 1000)
+                : 0,
             minPerson: data.minApplicants ?? 0,
             maxPerson: data.maxApplicants ?? 0,
         };
 
-        try {
-            const response = await createBoardApi.postBoard(payload);
+        console.log(
+            '[DEBUG] 제출 전 payload:',
+            JSON.stringify(payload, null, 2)
+        );
 
-            if (response.statusCode === 200) {
+        createFanfal(payload, {
+            onSuccess: () => {
                 toast.success('팬팔이 성공적으로 만들어졌습니다!');
-                onSubmit(payload);
                 onClose();
-            } else {
-                toast.error(`오류: ${response.message}`);
-            }
-        } catch (error) {
-            console.error('API 요청 실패:', error);
-            toast.error('서버와 통신 중 오류가 발생했습니다.');
-        }
+            },
+            onError: (error) => {
+                console.error('생성 실패:', error);
+                toast.error('팬팔 생성에 실패했습니다.');
+            },
+        });
     };
 
     return (
@@ -244,6 +249,9 @@ export default function PanpalModal({ onClose, onSubmit }: PanpalModalProps) {
                                 <DateInput
                                     name="startDate"
                                     control={control}
+                                    rules={{
+                                        required: '시작 날짜를 선택해주세요',
+                                    }}
                                     type="datetime-local"
                                     minDate={new Date()}
                                     isStartDate={true}
@@ -256,20 +264,46 @@ export default function PanpalModal({ onClose, onSubmit }: PanpalModalProps) {
                                 <p className="text-sm font-semibold h-6">
                                     마감 날짜
                                 </p>
-                                <DateInput<FormData>
-                                    name="endDate"
-                                    control={control}
-                                    type="datetime-local"
-                                    minDate={
-                                        startDate
-                                            ? new Date(startDate)
-                                            : new Date()
-                                    }
-                                    isStartDate={false}
-                                    error={errors.endDate}
-                                    placeholder="마감 날짜를 선택해주세요"
-                                    size="small"
-                                />
+                                <div className="h-18">
+                                    <DateInput<FormData>
+                                        name="endDate"
+                                        control={control}
+                                        rules={{
+                                            required:
+                                                '마감 날짜를 선택해주세요',
+                                            validate: (value) => {
+                                                if (
+                                                    !startDate ||
+                                                    !value ||
+                                                    !(value instanceof Date)
+                                                )
+                                                    return true;
+
+                                                const oneHourBefore =
+                                                    startDate.getTime() -
+                                                    60 * 60 * 1000;
+                                                if (
+                                                    value.getTime() >
+                                                    oneHourBefore
+                                                ) {
+                                                    return '마감 날짜는 시작 날짜 최소 1시간 전이어야 합니다.';
+                                                }
+                                                return true;
+                                            },
+                                        }}
+                                        type="datetime-local"
+                                        maxDate={
+                                            startDate
+                                                ? new Date(startDate)
+                                                : new Date()
+                                        }
+                                        minDate={new Date()}
+                                        isStartDate={false}
+                                        error={errors.endDate}
+                                        placeholder="마감 날짜를 선택해주세요"
+                                        size="small"
+                                    />
+                                </div>
                             </div>
                         </div>
 
@@ -291,9 +325,9 @@ export default function PanpalModal({ onClose, onSubmit }: PanpalModalProps) {
                                             validate: (value) =>
                                                 Number.isInteger(
                                                     Number(value)
-                                                ) && Number(value) > 0
+                                                ) && Number(value) > 1
                                                     ? true
-                                                    : '1 이상의 정수를 입력해주세요',
+                                                    : '2 이상의 정수를 입력해주세요',
                                         }}
                                         size="small"
                                     />

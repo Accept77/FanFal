@@ -12,6 +12,23 @@ interface ProfileProps {
     editButtonClassName?: string;
 }
 
+// URL 유효성 검사 함수
+const isValidUrl = (string: string): boolean => {
+    if (!string || string.trim() === '') return false;
+
+    try {
+        new URL(string);
+        return true;
+    } catch {
+        // 상대 경로나 절대 경로 형태도 허용
+        return (
+            string.startsWith('/') ||
+            string.startsWith('./') ||
+            string.startsWith('../')
+        );
+    }
+};
+
 export default function Profile({
     size,
     image,
@@ -43,11 +60,15 @@ export default function Profile({
             },
         },
     });
+
+    // 유효한 이미지 URL인지 확인
+    const hasValidImage = image && isValidUrl(image);
+
     return (
         <div className={containerClass({ size })}>
             <div className="relative">
                 <div className={imageClass({ size })}>
-                    {image ? (
+                    {hasValidImage ? (
                         <Image
                             src={image}
                             alt="profile"
