@@ -89,12 +89,10 @@ export const findTotalCount = async (
     );
 
     if (!initialResults || !initialResults[0]) {
-        console.log('No results found');
         return 0;
     }
 
     if (initialResults[0].length < 100) {
-        console.log('initialResults[0] length < 100');
         return Math.ceil(initialResults[0].length / 8);
     }
 

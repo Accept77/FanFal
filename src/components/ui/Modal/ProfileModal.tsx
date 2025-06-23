@@ -81,12 +81,6 @@ export default function EditProfileModal({
     };
 
     const handleFormSubmit = (data: FieldValues) => {
-        console.log('폼 제출 데이터:', {
-            nickname: data.nickname,
-            profileImage: data.file?.[0],
-            description: data.description,
-        });
-        console.log(data);
         onSubmit({
             nickName: data.nickname || user?.nickName,
             profileImg: data.file?.[0],

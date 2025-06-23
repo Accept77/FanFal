@@ -19,7 +19,6 @@ export const useChangeProfileMutation = () => {
     return useMutation({
         mutationFn: (data: ProfileEditRequest) => mypageApi.changeProfile(data),
         onSuccess: () => {
-            console.log('프로필 변경 성공');
             queryClient.invalidateQueries({ queryKey: ['user'] });
         },
         onError: (error) => {
@@ -32,9 +31,7 @@ export const useChangePasswordMutation = () => {
     return useMutation({
         mutationFn: (data: { password: string; newPassword: string }) =>
             mypageApi.changePassword(data),
-        onSuccess: () => {
-            console.log('비밀번호 변경 성공');
-        },
+        onSuccess: () => {},
         onError: (error) => {
             console.error('비밀번호 변경 실패:', error);
         },

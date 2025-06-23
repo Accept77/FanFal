@@ -23,7 +23,6 @@ export default function FindPasswordForm() {
         if (isPending || isSuccess) return;
         findPassword(data, {
             onSuccess: () => {
-                console.log('임시 비밀번호 발급 성공');
                 // 성공 토스트 메시지
                 toast.success('임시 비밀번호를 이메일로 발송했습니다!', {});
             },

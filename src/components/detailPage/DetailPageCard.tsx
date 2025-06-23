@@ -70,8 +70,6 @@ export default function DetailPageCard({
 
     const deadlineText = getDeadlineText(deadLine);
 
-    console.log('DetailPageCard minPerson:', minPerson);
-
     //TODO 밑에 'CONFIRMED_STATUS' -> 교체해야함 Deadline_status로.
     return (
         <div>

@@ -59,7 +59,6 @@ export const useGetList = ({
                 limit,
                 page,
             });
-            console.log('이건데 없어 ? API 응답 데이터:', response.data); // 여기에 찍어서 응답 확인
 
             return response.data;
         },

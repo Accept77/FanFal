@@ -4,7 +4,6 @@ import { TOKEN_EXPIRY } from '@/config/constants';
 import { fetchInstance } from '@/utils/apis/fetchInstance';
 
 export async function POST() {
-    console.log('refresh 요청');
     const cookieStore = await cookies();
     try {
         const refreshToken = cookieStore.get('refreshToken')?.value;
@@ -21,7 +20,6 @@ export async function POST() {
             .get('Authorization')
             ?.replace('Bearer ', '');
         if (!newAccessToken) {
-            console.log('❌ 백엔드에서 토큰을 받지 못함');
             return NextResponse.json(
                 {
                     status: 401,
@@ -49,7 +47,7 @@ export async function POST() {
             return jsonResponse;
         }
     } catch (error) {
-        console.log('❌ 프록시에서 백엔드 호출 실패:', error);
+        console.error('❌ 리프레쉬 토큰 검증 실패:', error);
         return NextResponse.json({
             status: 401,
             message: '리프레쉬 토큰 검증 실패',

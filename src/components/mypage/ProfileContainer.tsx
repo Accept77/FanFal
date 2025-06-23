@@ -37,7 +37,6 @@ export default function ProfileContainer() {
         password: string;
         newPassword: string;
     }) => {
-        console.log(data);
         setIsPasswordModalOpen(false);
         changePasswordMutation.mutate(data, {
             onSuccess: () => {

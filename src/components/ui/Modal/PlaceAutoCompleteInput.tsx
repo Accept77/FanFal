@@ -24,14 +24,10 @@ const PlaceAutoCompleteInput: React.FC<PlaceAutoCompleteInputProps> = ({
         const modalRoot = document.getElementById('modal-root');
 
         if (!pac || !input) {
-            console.log(
-                '[INFO] pac-container 또는 input이 없음. 위치 계산 스킵'
-            );
             return;
         }
 
         if (modalRoot && !modalRoot.contains(pac)) {
-            console.log('[DEBUG] pac-container를 modal-root에 append');
             modalRoot.appendChild(pac);
         }
 
@@ -49,15 +45,11 @@ const PlaceAutoCompleteInput: React.FC<PlaceAutoCompleteInputProps> = ({
         loader
             .importLibrary('places')
             .then(() => {
-                console.log('[DEBUG] Places 라이브러리 로딩 완료');
-
                 if (!currentInput) {
-                    console.log('[ERROR] inputRef가 null임');
                     return;
                 }
 
                 if (autocompleteRef.current) {
-                    console.log('[INFO] Autocomplete 이미 생성됨');
                     return;
                 }
 
@@ -67,19 +59,11 @@ const PlaceAutoCompleteInput: React.FC<PlaceAutoCompleteInputProps> = ({
                         componentRestrictions: { country: 'kr' },
                     }
                 );
-                console.log('[DEBUG] Autocomplete 인스턴스 생성됨');
 
                 autocompleteRef.current.addListener('place_changed', () => {
-                    console.log('[DEBUG] 장소가 선택됨');
-
                     const place = autocompleteRef.current!.getPlace();
-                    console.log('[DEBUG] getPlace()', place);
 
                     if (!place.geometry || !place.geometry.location) {
-                        console.log(
-                            '[ERROR] 선택한 장소에 위치 정보가 없음',
-                            place
-                        );
                         return;
                     }
 
@@ -87,11 +71,6 @@ const PlaceAutoCompleteInput: React.FC<PlaceAutoCompleteInputProps> = ({
                     const lng = place.geometry.location.lng();
                     const address = place.formatted_address || '';
 
-                    console.log('[DEBUG] 위치 정보 전달', {
-                        lat,
-                        lng,
-                        address,
-                    });
                     onPlaceSelect(lat, lng, address);
                 });
 
@@ -108,7 +87,6 @@ const PlaceAutoCompleteInput: React.FC<PlaceAutoCompleteInputProps> = ({
                 '.pac-container'
             ) as HTMLElement | null;
             if (pac) {
-                console.log('[DEBUG] pac-container 제거됨');
                 pac.remove();
             }
 

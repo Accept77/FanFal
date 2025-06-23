@@ -39,7 +39,6 @@ export default function PasswordModal({
             return;
         }
 
-        console.log('비밀번호 변경 정보', data);
         onSubmit({
             password: data.password,
             newPassword: data.newPassword,

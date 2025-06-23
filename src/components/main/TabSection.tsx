@@ -116,8 +116,7 @@ export default function TapSection({
             {isModalOpen && (
                 <PanpalModal
                     onClose={() => setIsModalOpen(false)}
-                    onSubmit={(data) => {
-                        console.log('제출된 데이터:', data);
+                    onSubmit={() => {
                         setIsModalOpen(false);
                     }}
                 />

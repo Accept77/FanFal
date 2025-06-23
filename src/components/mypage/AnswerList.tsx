@@ -45,8 +45,6 @@ export default function AnswerList() {
 
     const toDay = Date.now() / 1000;
 
-    console.log(allData);
-
     return (
         <div>
             {allData.length === 0 ? (

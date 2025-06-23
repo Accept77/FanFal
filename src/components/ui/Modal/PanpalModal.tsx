@@ -113,11 +113,6 @@ export default function PanpalModal({ onClose }: PanpalModalProps) {
             maxPerson: data.maxApplicants ?? 0,
         };
 
-        console.log(
-            '[DEBUG] 제출 전 payload:',
-            JSON.stringify(payload, null, 2)
-        );
-
         createFanfal(payload, {
             onSuccess: () => {
                 toast.success('팬팔이 성공적으로 만들어졌습니다!');

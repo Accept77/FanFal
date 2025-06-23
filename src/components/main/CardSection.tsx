@@ -58,7 +58,6 @@ export default function CardSection({
                     <div className="flex flex-col gap-10 sm:gap-10 xl:gap-30 w-full ">
                         <div className="flex- flex-col gap-3 min-h-100 sm:min-h-160 xl:min-h-80">
                             {currentCards.map((card) => {
-                                console.log('card.createUser:', card.nickName);
                                 return (
                                     <Link
                                         key={card.articleId}
@@ -114,8 +113,7 @@ export default function CardSection({
             {isModalOpen && (
                 <PanpalModal
                     onClose={() => setIsModalOpen(false)}
-                    onSubmit={(data) => {
-                        console.log('제출된 데이터:', data);
+                    onSubmit={() => {
                         setIsModalOpen(false);
                     }}
                 />

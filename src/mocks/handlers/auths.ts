@@ -4,11 +4,29 @@ import {
     LoginRequestDto,
     SignupMemberRequestDto,
 } from '@/types/auth';
-import { mockUser } from '@/__mock__/user';
 import { getCookie, removeCookie, setCookie } from '@/utils/cookies';
 import { TOKEN_EXPIRY } from '@/config/constants';
 
 const BASE_URL = 'http://localhost:3000'; // 추후 백엔드 서버로 변경
+
+const mockUser = [
+    {
+        email: 'test@test.com',
+        password: 'test1234!',
+        nickname: 'user1',
+        wistLikeCount: 5,
+        description: '안녕하세요 사용자입니다.',
+        profileImage: 'https://randomuser.me/api/portraits/men/75.jpg',
+    },
+    {
+        email: 'test2@test.com',
+        password: 'test1234!',
+        nickname: 'user2',
+        wistLikeCount: 10,
+        description: '안녕하세요 사용자2입니다.',
+        profileImage: 'https://randomuser.me/api/portraits/men/76.jpg',
+    },
+];
 
 export const loginHandlers = [
     http.post(`${BASE_URL}/api/auth/login`, async ({ request }) => {
@@ -93,7 +111,6 @@ export const loginHandlers = [
 ];
 export const logoutHandlers = [
     http.post(`${BASE_URL}/api/auth/logout`, async () => {
-        console.log('logoutHandlers 호출');
         removeCookie('accessToken', '/');
         removeCookie('refreshToken', '/');
         return HttpResponse.json({
@@ -138,7 +155,6 @@ export const signupHandlers = [
 ];
 export const userHandlers = [
     http.get(`${BASE_URL}/api/auth/user`, async ({ request }) => {
-        console.log('userHandlers 호출');
         const authHeader = request.headers.get('Authorization');
         const token = authHeader?.replace('Bearer ', '');
 
@@ -149,11 +165,8 @@ export const userHandlers = [
 
             // 토큰 만료 확인
             if (payload.exp < currentTime) {
-                console.log('🚨 토큰 만료됨!');
                 throw new Error('Token expired');
             }
-
-            console.log('✅ 토큰 유효함');
 
             // ✅ 성공 응답
             return HttpResponse.json({
@@ -168,8 +181,7 @@ export const userHandlers = [
                     description: '안녕하세요',
                 },
             });
-        } catch (error) {
-            console.log('🚨 토큰 검증 실패:', error);
+        } catch {
             return HttpResponse.json(
                 {
                     statusCode: 401,
@@ -182,7 +194,6 @@ export const userHandlers = [
 ];
 export const refreshHandlers = [
     http.post(`${BASE_URL}/api/auth/refresh`, async () => {
-        console.log('refreshHandlers 호출');
         const refreshToken = getCookie('refreshToken');
         if (!refreshToken) {
             console.error('❌ 리프레쉬 토큰이 없습니다');
@@ -208,8 +219,6 @@ export const refreshHandlers = [
                 console.error('❌ 리프레쉬 토큰이 만료되었습니다');
                 throw new Error('Refresh token expired');
             }
-
-            console.log('✅ 리프레쉬 토큰 검증 통과');
 
             // 새 액세스 토큰 생성
             const newAccessPayload = {

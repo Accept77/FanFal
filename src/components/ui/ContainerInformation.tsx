@@ -44,7 +44,7 @@ export default function ContainerInformaiton({
 
     const formattedDate = dateConverter(date, 'korea');
     const formattedLimitedDate = dateConverter(deadLine, 'korea');
-    console.log(user?.wistLikeCount);
+
     const { isLiked, toggleLike } = useLike(articleId, {
         isLoggedIn,
         refetch,

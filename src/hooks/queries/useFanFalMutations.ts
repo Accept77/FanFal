@@ -12,14 +12,10 @@ export function useFanFalMutations() {
 
     const joinMutation = useMutation<FanFalResponse, Error, number>({
         mutationFn: async (articleId) => {
-            console.log('참여 API 호출:', articleId);
             const result = await fanFalApi.join(articleId);
-            console.log('참여 API 응답:', result);
             return result;
         },
         onSuccess: (data, articleId) => {
-            console.log('참여 성공, 캐시 무효화 중...');
-
             queryClient.invalidateQueries({ queryKey: ['article', articleId] });
             queryClient.invalidateQueries({
                 queryKey: ['participants', articleId],
@@ -34,14 +30,10 @@ export function useFanFalMutations() {
 
     const cancelMutation = useMutation<FanFalResponse, Error, number>({
         mutationFn: async (articleId) => {
-            console.log('취소 API 호출:', articleId);
             const result = await fanFalApi.cancel(articleId);
-            console.log('취소 API 응답:', result);
             return result;
         },
         onSuccess: (data, articleId) => {
-            console.log('취소 성공, 캐시 무효화 중...');
-
             queryClient.invalidateQueries({ queryKey: ['article', articleId] });
             queryClient.invalidateQueries({
                 queryKey: ['participants', articleId],
