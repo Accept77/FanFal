@@ -10,12 +10,14 @@ import {
 } from '@/hooks/queries/useMyPage';
 import { toast } from 'react-toastify';
 import { imageUploadApi } from '@/utils/apis/imgS3Api';
+import { useQueryClient } from '@tanstack/react-query';
 
 export default function ProfileContainer() {
     const [isPasswordModalOpen, setIsPasswordModalOpen] = useState(false);
     const [isEditProfileModalOpen, setIsEditProfileModalOpen] = useState(false);
     const changeProfileMutation = useChangeProfileMutation();
     const changePasswordMutation = useChangePasswordMutation();
+    const queryClient = useQueryClient();
 
     const handleOpenPasswordModal = () => {
         setIsPasswordModalOpen(true);
@@ -86,6 +88,7 @@ export default function ProfileContainer() {
             {
                 onSuccess: () => {
                     toast.success('프로필이 변경되었습니다.');
+                    queryClient.invalidateQueries({ queryKey: ['user'] });
                 },
                 onError: () => {
                     toast.error('프로필 변경에 실패했습니다.');

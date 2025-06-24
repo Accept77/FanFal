@@ -138,7 +138,7 @@ export default function Nav() {
                         >
                             <Profile
                                 size="medium"
-                                image={user?.profileImage || ''}
+                                image={user?.profileImg || ''}
                             />
                         </div>
 

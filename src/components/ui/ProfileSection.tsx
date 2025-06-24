@@ -35,7 +35,7 @@ export default function ProfileSection({
                         <div className="w-full h-16 flex justify-between">
                             <Profile
                                 size="large"
-                                image={user?.profileImage || ''}
+                                image={user?.profileImg || ''}
                             ></Profile>
                             <Button
                                 size="small"

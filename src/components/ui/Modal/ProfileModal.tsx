@@ -55,7 +55,7 @@ export default function EditProfileModal({
     const file = watch('file');
     const previewImage = file?.[0]
         ? URL.createObjectURL(file[0])
-        : user?.profileImage || '';
+        : user?.profileImg || '';
 
     const handleImageClick = () => {
         setIsFileDialogOpen(true);

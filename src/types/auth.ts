@@ -45,7 +45,7 @@ export interface SignupData {
 export interface User {
     userId: string;
     nickName: string;
-    profileImage?: string;
+    profileImg?: string;
     wistLikeCount?: number;
     description?: string;
 }
