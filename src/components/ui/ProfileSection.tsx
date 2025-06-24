@@ -75,10 +75,7 @@ export default function ProfileSection({
             <div className="h-45 flex flex-col justify-between w-full">
                 <div className="h-16 w-full flex items-center gap-4 justify-between">
                     <div className="flex items-center gap-4">
-                        <Profile
-                            size="large"
-                            image={user?.profileImage || ''}
-                        />
+                        <Profile size="large" image={user?.profileImg || ''} />
                         <p className="text-lg font-semibold h-7 text-white overflow-hidden">
                             {user?.nickName}
                         </p>

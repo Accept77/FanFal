@@ -216,7 +216,7 @@ export default function DetailPageComment({
                             <div className="h-full gap-2 flex items-center">
                                 <Profile
                                     size="small"
-                                    image={user?.profileImage}
+                                    image={user?.profileImg}
                                 />
                                 <p className="text-sm font-normal text-gray-300">
                                     {user?.nickName}
